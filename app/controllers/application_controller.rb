@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :find_user
+  before_action :require_login
 
   def render_404
     # DPR: supposedly this will actually render a 404 page in production
@@ -12,7 +13,11 @@ class ApplicationController < ActionController::Base
   def find_user
     if session[:user_id]
       @login_user = User.find_by(id: session[:user_id])
-    else
+    end
+  end
+
+  def require_login
+    if @login_user == nil
       flash[:status] = :failure
       flash[:result_text] = "Please Log-In!"
       redirect_to root_path

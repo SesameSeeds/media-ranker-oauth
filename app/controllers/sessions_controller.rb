@@ -1,11 +1,12 @@
 class SessionsController < ApplicationController
 
-  skip_before_action :find_user
+  skip_before_action :require_login
 
   def login_form
   end
 
   def login
+
     username = params[:username]
     if username and user = User.find_by(username: username)
       session[:user_id] = user.id
@@ -36,8 +37,10 @@ class SessionsController < ApplicationController
   end
 
   def create
+
+
     @auth_hash = request.env['omniauth.auth']
-  
+
 
     @user = User.find_by(uid: @auth_hash['uid'], provider: @auth_hash['provider'])
 
@@ -52,7 +55,7 @@ class SessionsController < ApplicationController
       session[:user_id] = @user.id
       flash[:success] = "#{@user.username} is logged in"
     else
-      flash[:error] = "unable to log in"
+      flash[:error] = "Unable to log in"
     end
     redirect_to root_path
   end
